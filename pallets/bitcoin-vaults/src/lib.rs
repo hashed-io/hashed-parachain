@@ -611,7 +611,14 @@ pub mod pallet {
 		/// 
 		/// Use with caution!
 		/// 
+		/// ### Parameters:
+		/// - `origin`: The user who performs the action. 
+		/// 
 		/// Can only be called by root and removes All vaults and proposals
+		///
+		/// ### Considerations:
+		/// - This function is only available to the `admin` with sudo access. 
+		/// - Should be for testing only? Else the hard-coded quantities need to be fixed.
 		#[transactional]
 		#[pallet::weight(10_000 + T::DbWeight::get().writes(1))]
 		pub fn kill_storage(

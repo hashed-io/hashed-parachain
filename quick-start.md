@@ -24,7 +24,7 @@ Go to https://polkadot.js.org/apps/?rpc=ws%3A%2F%2F127.0.0.1%3A9944#/parachains/
 
 and Click `+ParaID`
 
-# Launch the Parachain
+## Launch the Parachain
 
 ```bash
 
@@ -38,7 +38,7 @@ cd hashed-parachain
 cargo build --release
 
 # Assumes that `rococo-local` is in `node/chan_spec.rs` as the relay you registered with
-./target/release/hashed-parachain-node build-spec --disable-default-bootnode > rococo-local-parachain-plain.json
+./target/release/hashed-parachain build-spec --disable-default-bootnode > rococo-local-parachain-plain.json
 ```
 
 # Add the ParaID
@@ -56,19 +56,19 @@ Update `rococo-local-parachain-plain.json` and change the parachain ID to 2000 i
 # Build the Raw Spec File
 ```bash
 # build raw spec 
-./target/release/hashed-parachain-node build-spec --chain rococo-local-parachain-plain.json --raw --disable-default-bootnode > rococo-local-parachain-2000-raw.json
+./target/release/hashed-parachain build-spec --chain rococo-local-parachain-plain.json --raw --disable-default-bootnode > rococo-local-parachain-2000-raw.json
 ```
 
 # Building genesis state and wasm files
 ```bash
-./target/release/hashed-parachain-node export-genesis-state --chain rococo-local-parachain-2000-raw.json > para-2000-genesis
+./target/release/hashed-parachain export-genesis-state --chain rococo-local-parachain-2000-raw.json > para-2000-genesis
 
-./target/release/hashed-parachain-node export-genesis-wasm --chain rococo-local-parachain-2000-raw.json > para-2000-wasm
+./target/release/hashed-parachain export-genesis-wasm --chain rococo-local-parachain-2000-raw.json > para-2000-wasm
 ```
 
 # Start Collator 
 ```bash
-./target/release/hashed-parachain-node \
+./target/release/hashed-parachain \
     --alice \
     --collator \
     --force-authoring \
@@ -91,7 +91,7 @@ Update `rococo-local-parachain-plain.json` and change the parachain ID to 2000 i
 ### Purging the Chains
 ```bash
 # Purge a chain
-./target/release/hashed-parachain-node \
+./target/release/hashed-parachain \
     purge-chain \
     --base-path /tmp/parachain/alice \
     --chain ~/github.com/hashed-io/hashed-parachain/hashed-parachain-2000-raw.json
