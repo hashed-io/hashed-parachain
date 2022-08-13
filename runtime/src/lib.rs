@@ -8,6 +8,8 @@ include!(concat!(env!("OUT_DIR"), "/wasm_binary.rs"));
 
 mod weights;
 pub mod xcm_config;
+pub mod constants;
+use constants::*;
 
 use cumulus_pallet_parachain_system::RelayNumberStrictlyIncreases;
 use smallvec::smallvec;
@@ -27,7 +29,7 @@ use sp_version::RuntimeVersion;
 
 use frame_support::{
 	construct_runtime, parameter_types,
-	traits::Everything,
+	traits::{Everything, AsEnsureOriginWithArg},
 	weights::{
 		constants::WEIGHT_PER_SECOND, ConstantMultiplier, DispatchClass, Weight,
 		WeightToFeeCoefficient, WeightToFeeCoefficients, WeightToFeePolynomial,
@@ -36,7 +38,7 @@ use frame_support::{
 };
 use frame_system::{
 	limits::{BlockLength, BlockWeights},
-	EnsureRoot,
+	EnsureRoot, EnsureSigned,
 };
 pub use sp_consensus_aura::sr25519::AuthorityId as AuraId;
 pub use sp_runtime::{MultiAddress, Perbill, Permill};
@@ -170,8 +172,8 @@ impl_opaque_keys! {
 
 #[sp_version::runtime_version]
 pub const VERSION: RuntimeVersion = RuntimeVersion {
-	spec_name: create_runtime_str!("template-parachain"),
-	impl_name: create_runtime_str!("template-parachain"),
+	spec_name: create_runtime_str!("hashed"),
+	impl_name: create_runtime_str!("hashed"),
 	authoring_version: 1,
 	spec_version: 1,
 	impl_version: 0,
@@ -459,6 +461,152 @@ impl pallet_template::Config for Runtime {
 	type Event = Event;
 }
 
+parameter_types! {
+	pub const XPubLen: u32 = 166;
+	pub const PSBTMaxLen: u32  = 2048;
+	pub const MaxVaultsPerUser: u32 = 10;
+	pub const MaxCosignersPerVault: u32 = 7;
+	pub const VaultDescriptionMaxLen: u32 = 200;
+	pub const OutputDescriptorMaxLen: u32 = 2048;
+	pub const MaxProposalsPerVault: u32 = 5;
+}
+
+impl pallet_bitcoin_vaults::Config for Runtime {
+	type AuthorityId = pallet_bitcoin_vaults::types::crypto::TestAuthId;
+	type Event = Event;
+	type ChangeBDKOrigin = EnsureRoot<AccountId>;
+	type XPubLen = XPubLen;
+	type PSBTMaxLen = PSBTMaxLen;
+	type MaxVaultsPerUser = MaxVaultsPerUser;
+	type MaxCosignersPerVault = MaxCosignersPerVault;
+	type VaultDescriptionMaxLen =VaultDescriptionMaxLen;
+	type OutputDescriptorMaxLen = OutputDescriptorMaxLen;
+	type MaxProposalsPerVault = MaxProposalsPerVault;
+}
+
+/// The payload being signed in transactions.
+pub type SignedPayload = sp_runtime::generic::SignedPayload<Call, SignedExtra>;
+
+use sp_runtime::SaturatedConversion;
+use codec::Encode;
+
+impl<LocalCall> frame_system::offchain::SendTransactionTypes<LocalCall> for Runtime
+where
+	Call: From<LocalCall>,
+{
+	type OverarchingCall = Call;
+	type Extrinsic = UncheckedExtrinsic;
+}
+
+impl<LocalCall> frame_system::offchain::CreateSignedTransaction<LocalCall> for Runtime
+where
+    Call: From<LocalCall>,
+{
+    fn create_transaction<C: frame_system::offchain::AppCrypto<Self::Public, Self::Signature>>(
+        call: Call,
+        public: <Signature as sp_runtime::traits::Verify>::Signer,
+        account: AccountId,
+        index: Index,
+    ) -> Option<(Call, <UncheckedExtrinsic as sp_runtime::traits::Extrinsic>::SignaturePayload)> {
+        let period = BlockHashCount::get() as u64;
+        let current_block = System::block_number()
+            .saturated_into::<u64>()
+            .saturating_sub(1);
+        let tip = 0;
+        let extra: SignedExtra = (
+			frame_system::CheckNonZeroSender::<Runtime>::new(),
+            frame_system::CheckSpecVersion::<Runtime>::new(),
+            frame_system::CheckTxVersion::<Runtime>::new(),
+            frame_system::CheckGenesis::<Runtime>::new(),
+            frame_system::CheckEra::<Runtime>::from(generic::Era::mortal(period, current_block)),
+            frame_system::CheckNonce::<Runtime>::from(index),
+            frame_system::CheckWeight::<Runtime>::new(),
+            pallet_transaction_payment::ChargeTransactionPayment::<Runtime>::from(tip),
+        );
+
+        let raw_payload = SignedPayload::new(call, extra)
+            .map_err(|e| {
+                log::warn!("Unable to create signed payload: {:?}", e);
+            })
+            .ok()?;
+        let signature = raw_payload.using_encoded(|payload| C::sign(payload, public))?;
+        let address = account;
+        let (call, extra, _) = raw_payload.deconstruct();
+        Some((call, (sp_runtime::MultiAddress::Id(address), signature.into(), extra)))
+    }
+}
+
+impl frame_system::offchain::SigningTypes for Runtime {
+    type Public = <Signature as sp_runtime::traits::Verify>::Signer;
+    type Signature = Signature;
+}
+
+parameter_types! {
+	pub const AssetDeposit: Balance = 100 * DOLLARS;
+	pub const ApprovalDeposit: Balance = 1 * DOLLARS;
+	pub const StringLimit: u32 = 50;
+	pub const MetadataDepositBase: Balance = 10 * DOLLARS;
+	pub const MetadataDepositPerByte: Balance = 1 * DOLLARS;
+}
+
+parameter_types! {
+	pub const CollectionDeposit: Balance = 100 * DOLLARS;
+	pub const ItemDeposit: Balance = 1 * DOLLARS;
+	pub const KeyLimit: u32 = 32;
+	pub const ValueLimit: u32 = 256;
+}
+
+impl pallet_uniques::Config for Runtime {
+	type Event = Event;
+	type CollectionId = u32;
+	type ItemId = u32;
+	type Currency = Balances;
+	type ForceOrigin = frame_system::EnsureRoot<AccountId>;
+	type CollectionDeposit = CollectionDeposit;
+	type ItemDeposit = ItemDeposit;
+	type MetadataDepositBase = MetadataDepositBase;
+	type AttributeDepositBase = MetadataDepositBase;
+	type DepositPerByte = MetadataDepositPerByte;
+	type StringLimit = StringLimit;
+	type KeyLimit = KeyLimit;
+	type ValueLimit = ValueLimit;
+	type WeightInfo = pallet_uniques::weights::SubstrateWeight<Runtime>;
+	#[cfg(feature = "runtime-benchmarks")]
+	type Helper = ();
+	type CreateOrigin = AsEnsureOriginWithArg<EnsureSigned<AccountId>>;
+	type Locker = ();
+}
+
+impl pallet_fruniques::Config for Runtime {
+	type Event = Event;
+}
+
+parameter_types! {
+	pub const LabelMaxLen:u32 = 32;
+	pub const MaxAuthsPerMarket:u32 = 3; // 1 of each role (1 owner, 1 admin, etc.)
+	pub const MaxRolesPerAuth: u32 = 2;
+	pub const MaxApplicants: u32 = 10;
+	pub const NotesMaxLen: u32 = 256;
+	pub const MaxFeedbackLen: u32 = 256; 
+	pub const NameMaxLen: u32 = 100;
+	pub const MaxFiles: u32 = 10;
+	pub const MaxApplicationsPerCustodian: u32 = 10;
+}
+
+impl pallet_gated_marketplace::Config for Runtime {
+	type Event = Event;
+	type RemoveOrigin = EnsureRoot<AccountId>;
+	type MaxAuthsPerMarket = MaxAuthsPerMarket;
+	type MaxRolesPerAuth = MaxRolesPerAuth;
+	type MaxApplicants = MaxApplicants;
+	type LabelMaxLen = LabelMaxLen;
+	type NotesMaxLen = NotesMaxLen;
+	type MaxFeedbackLen = MaxFeedbackLen;
+	type NameMaxLen= NameMaxLen;
+	type MaxFiles = MaxFiles;
+	type MaxApplicationsPerCustodian = MaxApplicationsPerCustodian;
+}
+
 // Create the runtime by composing the FRAME pallets that were previously configured.
 construct_runtime!(
 	pub enum Runtime where
@@ -493,6 +641,10 @@ construct_runtime!(
 
 		// Template
 		TemplatePallet: pallet_template::{Pallet, Call, Storage, Event<T>}  = 40,
+		BitcoinVaults: pallet_bitcoin_vaults::{Pallet, Call, Storage, Event<T>, ValidateUnsigned}  = 41,
+		Uniques: pallet_uniques::{Pallet, Call, Storage, Event<T>}  = 42,
+		Fruniques: pallet_fruniques::{Pallet, Call, Storage, Event<T>}  = 43,
+		GatedMarketplace: pallet_gated_marketplace::{Pallet, Call, Storage, Event<T>}  = 44,
 	}
 );
 
