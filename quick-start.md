@@ -1,12 +1,13 @@
+# Quick Start 
+This is a quick guide on connecting the parachain to a local testnet relay chain. 
+
 # Launch the Relay Chain
 ```bash
-# Clone
 cd ~/github.com/paritytech
 
 git clone https://github.com/paritytech/polkadot
 cd polkadot
 
-# Compile Polkadot with the real overseer feature
 cargo build --release
 
 # Generate a raw chain spec
@@ -24,46 +25,43 @@ Go to https://polkadot.js.org/apps/?rpc=ws%3A%2F%2F127.0.0.1%3A9944#/parachains/
 
 and Click `+ParaID`
 
-## Launch the Parachain
-
+# Launch the Parachain
 ```bash
 
 cd ~/github.com/hashed-io
 
-# Clone
 git clone https://github.com/hashed-io/hashed-parachain
 cd hashed-parachain
 
-# Compile
 cargo build --release
 
-# Assumes that `rococo-local` is in `node/chan_spec.rs` as the relay you registered with
-./target/release/hashed-parachain build-spec --disable-default-bootnode > rococo-local-parachain-plain.json
+./target/release/hashed-parachain build-spec --chain md5 --disable-default-bootnode > md5-local-parachain.json
 ```
 
 # Add the ParaID
-Update `rococo-local-parachain-plain.json` and change the parachain ID to 2000 in two places.
+Update `md5-local-parachain.json` and change the parachain ID to 2000 in two places.
 
 ```json
 // --snip--
-  "para_id": 2000, // <--- your already registered ID
+  "para_id": 2000,
   // --snip--
       "parachainInfo": {
-        "parachainId": 2000 // <--- your already registered ID
+        "parachainId": 2000 
       },
   // --snip--
 ```
+
 # Build the Raw Spec File
 ```bash
 # build raw spec 
-./target/release/hashed-parachain build-spec --chain rococo-local-parachain-plain.json --raw --disable-default-bootnode > rococo-local-parachain-2000-raw.json
+./target/release/hashed-parachain build-spec --chain md5-local-parachain.json --raw --disable-default-bootnode > md5-local-parachain-raw.json
 ```
 
 # Building genesis state and wasm files
 ```bash
-./target/release/hashed-parachain export-genesis-state --chain rococo-local-parachain-2000-raw.json > para-2000-genesis
+./target/release/hashed-parachain export-genesis-state --chain md5-local-parachain-raw.json > md5-genesis
 
-./target/release/hashed-parachain export-genesis-wasm --chain rococo-local-parachain-2000-raw.json > para-2000-wasm
+./target/release/hashed-parachain export-genesis-wasm --chain md5-local-parachain-raw.json > md5-wasm
 ```
 
 # Start Collator 
@@ -72,7 +70,7 @@ Update `rococo-local-parachain-plain.json` and change the parachain ID to 2000 i
     --alice \
     --collator \
     --force-authoring \
-    --chain rococo-local-parachain-2000-raw.json \
+    --chain md5-local-parachain-raw.json \
     --base-path /tmp/parachain/alice \
     --port 40333 \
     --ws-port 8844 \
@@ -94,7 +92,7 @@ Update `rococo-local-parachain-plain.json` and change the parachain ID to 2000 i
 ./target/release/hashed-parachain \
     purge-chain \
     --base-path /tmp/parachain/alice \
-    --chain ~/github.com/hashed-io/hashed-parachain/hashed-parachain-2000-raw.json
+    --chain ~/github.com/hashed-io/hashed-parachain/md5-local-parachain-raw.json
 
 # Purge relay chain
 ./target/release/polkadot purge-chain --base-path /tmp/relay/alice --chain ~/github.com/paritytech/polkadot/rococo-custom-2-raw.json 
