@@ -11,15 +11,15 @@ cd polkadot
 cargo build --release
 
 # Generate a raw chain spec
-./target/release/polkadot build-spec --chain rococo-local --disable-default-bootnode --raw > ~/github.com/paritytech/polkadot/rococo-custom-2-raw.json \
-e.json
+./target/release/polkadot build-spec --chain rococo-local --disable-default-bootnode --raw > ~/github.com/paritytech/polkadot/rococo-custom-2-raw.json
 
 # Alice
-./target/release/polkadot --chain ~/github.com/paritytech/polkadot/rococo-custom-2-raw.json --alice --tmp
+./target/release/polkadot --alice --validator --base-path /tmp/relay/alice --chain ~/github.com/paritytech/polkadot/rococo-custom-2-raw.json --port 30333 --ws-port 9944
 
 # Bob (In a separate terminal)
-./target/release/polkadot --chain ~/github.com/paritytech/polkadot/rococo-custom-2-raw.json --bob --tmp --port 30334
+./target/release/polkadot --bob --validator --base-path /tmp/relay/bob --chain ~/github.com/paritytech/polkadot/rococo-custom-2-raw.json --port 30334 --ws-port 9945
 ```
+
 # Reserve the Para ID 
 Go to https://polkadot.js.org/apps/?rpc=ws%3A%2F%2F127.0.0.1%3A9944#/parachains/parathreads
 
@@ -44,11 +44,11 @@ Update `md5-local-parachain.json` and change the parachain ID to 2000 in two pla
 ```json
 // --snip--
   "para_id": 2000,
-  // --snip--
-      "parachainInfo": {
-        "parachainId": 2000 
-      },
-  // --snip--
+// --snip--
+  "parachainInfo": {
+      "parachainId": 2000 
+  },
+// --snip--
 ```
 
 # Build the Raw Spec File
@@ -59,7 +59,7 @@ Update `md5-local-parachain.json` and change the parachain ID to 2000 in two pla
 
 # Building genesis state and wasm files
 ```bash
-./target/release/hashed-parachain export-genesis-state --chain md5-local-parachain-raw.json > md5-genesis
+./target/release/hashed-parachain export-genesis-state --chain md5-local-parachain-raw.json > md5-genesis-head
 
 ./target/release/hashed-parachain export-genesis-wasm --chain md5-local-parachain-raw.json > md5-wasm
 ```
@@ -97,4 +97,6 @@ Update `md5-local-parachain.json` and change the parachain ID to 2000 in two pla
 # Purge relay chain
 ./target/release/polkadot purge-chain --base-path /tmp/relay/alice --chain ~/github.com/paritytech/polkadot/rococo-custom-2-raw.json 
 
+# Sometimes I use this:
+rm -rf /tmp/relay && rm -rf /tmp/parachain
 ```

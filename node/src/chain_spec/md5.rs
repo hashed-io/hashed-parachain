@@ -1,5 +1,6 @@
 use sc_service::ChainType;
 use sp_core::sr25519;
+use hex_literal::hex;
 
 use super::{
 	get_account_id_from_seed, get_collator_keys_from_seed, template_session_keys, SAFE_XCM_VERSION, Extensions,
@@ -38,6 +39,9 @@ pub fn get_chain_spec() -> Md5ChainSpec {
 					),
 				],
 				vec![
+                    // 5HgAxuAcEybo448w5BZdoceCuHMAbEW9AetBKsj9s5GEBZT3
+                    hex!["f83a0218e100ce3ede12c5d403116ef034124c62b181fff6935403cea9396d2f"].into(),                    
+                    hex!["4a70d789b0f0897e0880e8d3d532187ac77cbda04228cfadf8bededdd0b1005e"].into(),
 					get_account_id_from_seed::<sr25519::Public>("Alice"),
 					get_account_id_from_seed::<sr25519::Public>("Bob"),
 					get_account_id_from_seed::<sr25519::Public>("Charlie"),
@@ -58,7 +62,7 @@ pub fn get_chain_spec() -> Md5ChainSpec {
 		None,
 		None,
 		None,
-		None,
+		Some(properties),
 		Extensions {
 			relay_chain: "rococo-local".into(), // You MUST set this to the correct network!
 			para_id: 1000,
