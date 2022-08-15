@@ -1,0 +1,1 @@
+window.ALL_CRATES = ["hashed_parachain","hashed_parachain_runtime","pallet_bitcoin_vaults","pallet_fruniques","pallet_gated_marketplace","pallet_template"];

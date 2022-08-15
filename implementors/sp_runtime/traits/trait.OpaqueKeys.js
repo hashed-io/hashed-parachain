@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["hashed_parachain_runtime"] = [{"text":"impl OpaqueKeys for <a class=\"struct\" href=\"hashed_parachain_runtime/struct.SessionKeys.html\" title=\"struct hashed_parachain_runtime::SessionKeys\">SessionKeys</a>","synthetic":false,"types":["hashed_parachain_runtime::SessionKeys"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
