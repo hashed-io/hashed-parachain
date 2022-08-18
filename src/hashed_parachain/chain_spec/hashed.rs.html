@@ -121,7 +121,7 @@
 <span class="kw">use</span> <span class="ident">sp_core::sr25519</span>;
 
 <span class="kw">use</span> <span class="kw">super</span>::{
-	<span class="ident">get_account_id_from_seed</span>, <span class="ident">get_collator_keys_from_seed</span>, <span class="ident">template_session_keys</span>, <span class="ident">SAFE_XCM_VERSION</span>, <span class="ident">Extensions</span>,
+	<span class="ident">get_account_id_from_seed</span>, <span class="ident">get_collator_keys_from_seed</span>, <span class="ident">session_keys</span>, <span class="ident">SAFE_XCM_VERSION</span>, <span class="ident">Extensions</span>,
 };
 
 <span class="kw">use</span> <span class="ident">cumulus_primitives_core::ParaId</span>;
@@ -214,7 +214,7 @@
 					(
 						<span class="ident">acc</span>.<span class="ident">clone</span>(),                 <span class="comment">// account id</span>
 						<span class="ident">acc</span>,                         <span class="comment">// validator id</span>
-						<span class="ident">template_session_keys</span>(<span class="ident">aura</span>), <span class="comment">// session keys</span>
+						<span class="ident">session_keys</span>(<span class="ident">aura</span>), <span class="comment">// session keys</span>
 					)
 				})
 				.<span class="ident">collect</span>(),

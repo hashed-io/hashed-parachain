@@ -314,7 +314,7 @@
 <span class="doccomment">/// Generate the session keys from individual elements.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// The input must be a tuple of individual keys (a single arg for now since we have just one key).</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">template_session_keys</span>(<span class="ident">keys</span>: <span class="ident">AuraId</span>) -&gt; <span class="ident">hashed_parachain_runtime::SessionKeys</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">session_keys</span>(<span class="ident">keys</span>: <span class="ident">AuraId</span>) -&gt; <span class="ident">hashed_parachain_runtime::SessionKeys</span> {
 	<span class="ident">hashed_parachain_runtime::SessionKeys</span> { <span class="ident">aura</span>: <span class="ident">keys</span> }
 }
 
@@ -461,7 +461,7 @@
 					(
 						<span class="ident">acc</span>.<span class="ident">clone</span>(),                 <span class="comment">// account id</span>
 						<span class="ident">acc</span>,                         <span class="comment">// validator id</span>
-						<span class="ident">template_session_keys</span>(<span class="ident">aura</span>), <span class="comment">// session keys</span>
+						<span class="ident">session_keys</span>(<span class="ident">aura</span>), <span class="comment">// session keys</span>
 					)
 				})
 				.<span class="ident">collect</span>(),

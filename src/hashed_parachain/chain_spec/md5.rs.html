@@ -119,12 +119,15 @@
 <span id="113">113</span>
 <span id="114">114</span>
 <span id="115">115</span>
+<span id="116">116</span>
+<span id="117">117</span>
+<span id="118">118</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">sc_service::ChainType</span>;
-<span class="kw">use</span> <span class="ident">sp_core::sr25519</span>;
+<span class="kw">use</span> <span class="ident">sp_core</span>::{<span class="ident">crypto::UncheckedInto</span>, <span class="ident">sr25519</span>};
 <span class="kw">use</span> <span class="ident">hex_literal::hex</span>;
 
 <span class="kw">use</span> <span class="kw">super</span>::{
-	<span class="ident">get_account_id_from_seed</span>, <span class="ident">get_collator_keys_from_seed</span>, <span class="ident">template_session_keys</span>, <span class="ident">SAFE_XCM_VERSION</span>, <span class="ident">Extensions</span>,
+	<span class="ident">get_account_id_from_seed</span>, <span class="ident">session_keys</span>, <span class="ident">SAFE_XCM_VERSION</span>, <span class="ident">Extensions</span>,
 };
 
 <span class="kw">use</span> <span class="ident">cumulus_primitives_core::ParaId</span>;
@@ -151,17 +154,20 @@
 				<span class="comment">// initial collators.</span>
 				<span class="macro">vec!</span>[
 					(
-						<span class="ident">get_account_id_from_seed</span>::<span class="op">&lt;</span><span class="ident">sr25519::Public</span><span class="op">&gt;</span>(<span class="string">&quot;Alice&quot;</span>),
-						<span class="ident">get_collator_keys_from_seed</span>(<span class="string">&quot;Alice&quot;</span>),
+                        <span class="comment">// 5HgAxuAcEybo448w5BZdoceCuHMAbEW9AetBKsj9s5GEBZT3</span>
+                        <span class="macro">hex!</span>[<span class="string">&quot;f83a0218e100ce3ede12c5d403116ef034124c62b181fff6935403cea9396d2f&quot;</span>].<span class="ident">into</span>(),                    						
+                        <span class="macro">hex!</span>[<span class="string">&quot;f83a0218e100ce3ede12c5d403116ef034124c62b181fff6935403cea9396d2f&quot;</span>].<span class="ident">unchecked_into</span>(),
 					),
 					(
-						<span class="ident">get_account_id_from_seed</span>::<span class="op">&lt;</span><span class="ident">sr25519::Public</span><span class="op">&gt;</span>(<span class="string">&quot;Bob&quot;</span>),
-						<span class="ident">get_collator_keys_from_seed</span>(<span class="string">&quot;Bob&quot;</span>),
+                        <span class="comment">// 5DkJvQp2gqHraWZU1BNCDxEKTQHezn2Qy7z5hLPksUdjtEG9</span>
+                        <span class="macro">hex!</span>[<span class="string">&quot;4a70d789b0f0897e0880e8d3d532187ac77cbda04228cfadf8bededdd0b1005e&quot;</span>].<span class="ident">into</span>(),                    						
+                        <span class="macro">hex!</span>[<span class="string">&quot;4a70d789b0f0897e0880e8d3d532187ac77cbda04228cfadf8bededdd0b1005e&quot;</span>].<span class="ident">unchecked_into</span>(),
 					),
 				],
 				<span class="macro">vec!</span>[
                     <span class="comment">// 5HgAxuAcEybo448w5BZdoceCuHMAbEW9AetBKsj9s5GEBZT3</span>
-                    <span class="macro">hex!</span>[<span class="string">&quot;f83a0218e100ce3ede12c5d403116ef034124c62b181fff6935403cea9396d2f&quot;</span>].<span class="ident">into</span>(),                    
+                    <span class="macro">hex!</span>[<span class="string">&quot;f83a0218e100ce3ede12c5d403116ef034124c62b181fff6935403cea9396d2f&quot;</span>].<span class="ident">into</span>(),   
+                    <span class="comment">// 5DkJvQp2gqHraWZU1BNCDxEKTQHezn2Qy7z5hLPksUdjtEG9                 </span>
                     <span class="macro">hex!</span>[<span class="string">&quot;4a70d789b0f0897e0880e8d3d532187ac77cbda04228cfadf8bededdd0b1005e&quot;</span>].<span class="ident">into</span>(),
 					<span class="ident">get_account_id_from_seed</span>::<span class="op">&lt;</span><span class="ident">sr25519::Public</span><span class="op">&gt;</span>(<span class="string">&quot;Alice&quot;</span>),
 					<span class="ident">get_account_id_from_seed</span>::<span class="op">&lt;</span><span class="ident">sr25519::Public</span><span class="op">&gt;</span>(<span class="string">&quot;Bob&quot;</span>),
@@ -176,7 +182,7 @@
 					<span class="ident">get_account_id_from_seed</span>::<span class="op">&lt;</span><span class="ident">sr25519::Public</span><span class="op">&gt;</span>(<span class="string">&quot;Eve//stash&quot;</span>),
 					<span class="ident">get_account_id_from_seed</span>::<span class="op">&lt;</span><span class="ident">sr25519::Public</span><span class="op">&gt;</span>(<span class="string">&quot;Ferdie//stash&quot;</span>),
 				],
-				<span class="number">1000</span>.<span class="ident">into</span>(),
+				<span class="number">4088</span>.<span class="ident">into</span>(),
 			)
 		},
 		<span class="ident">Vec::new</span>(),
@@ -185,8 +191,8 @@
 		<span class="prelude-val">None</span>,
 		<span class="prelude-val">Some</span>(<span class="ident">properties</span>),
 		<span class="ident">Extensions</span> {
-			<span class="ident">relay_chain</span>: <span class="string">&quot;rococo-local&quot;</span>.<span class="ident">into</span>(), <span class="comment">// You MUST set this to the correct network!</span>
-			<span class="ident">para_id</span>: <span class="number">1000</span>,
+			<span class="ident">relay_chain</span>: <span class="string">&quot;rococo&quot;</span>.<span class="ident">into</span>(), <span class="comment">// You MUST set this to the correct network!</span>
+			<span class="ident">para_id</span>: <span class="number">4088</span>,
 		},
 	)
 }
@@ -218,7 +224,7 @@
 					(
 						<span class="ident">acc</span>.<span class="ident">clone</span>(),                 <span class="comment">// account id</span>
 						<span class="ident">acc</span>,                         <span class="comment">// validator id</span>
-						<span class="ident">template_session_keys</span>(<span class="ident">aura</span>), <span class="comment">// session keys</span>
+						<span class="ident">session_keys</span>(<span class="ident">aura</span>), <span class="comment">// session keys</span>
 					)
 				})
 				.<span class="ident">collect</span>(),
