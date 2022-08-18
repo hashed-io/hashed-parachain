@@ -2,7 +2,7 @@ use sc_service::ChainType;
 use sp_core::sr25519;
 
 use super::{
-	get_account_id_from_seed, get_collator_keys_from_seed, template_session_keys, SAFE_XCM_VERSION, Extensions,
+	get_account_id_from_seed, get_collator_keys_from_seed, session_keys, SAFE_XCM_VERSION, Extensions,
 };
 
 use cumulus_primitives_core::ParaId;
@@ -95,7 +95,7 @@ fn hashed_genesis(
 					(
 						acc.clone(),                 // account id
 						acc,                         // validator id
-						template_session_keys(aura), // session keys
+						session_keys(aura), // session keys
 					)
 				})
 				.collect(),

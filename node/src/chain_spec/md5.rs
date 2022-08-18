@@ -1,9 +1,9 @@
 use sc_service::ChainType;
-use sp_core::sr25519;
+use sp_core::{crypto::UncheckedInto, sr25519};
 use hex_literal::hex;
 
 use super::{
-	get_account_id_from_seed, get_collator_keys_from_seed, template_session_keys, SAFE_XCM_VERSION, Extensions,
+	get_account_id_from_seed, session_keys, SAFE_XCM_VERSION, Extensions,
 };
 
 use cumulus_primitives_core::ParaId;
@@ -30,17 +30,20 @@ pub fn get_chain_spec() -> Md5ChainSpec {
 				// initial collators.
 				vec![
 					(
-						get_account_id_from_seed::<sr25519::Public>("Alice"),
-						get_collator_keys_from_seed("Alice"),
+                        // 5HgAxuAcEybo448w5BZdoceCuHMAbEW9AetBKsj9s5GEBZT3
+                        hex!["f83a0218e100ce3ede12c5d403116ef034124c62b181fff6935403cea9396d2f"].into(),                    						
+                        hex!["f83a0218e100ce3ede12c5d403116ef034124c62b181fff6935403cea9396d2f"].unchecked_into(),
 					),
 					(
-						get_account_id_from_seed::<sr25519::Public>("Bob"),
-						get_collator_keys_from_seed("Bob"),
+                        // 5DkJvQp2gqHraWZU1BNCDxEKTQHezn2Qy7z5hLPksUdjtEG9
+                        hex!["4a70d789b0f0897e0880e8d3d532187ac77cbda04228cfadf8bededdd0b1005e"].into(),                    						
+                        hex!["4a70d789b0f0897e0880e8d3d532187ac77cbda04228cfadf8bededdd0b1005e"].unchecked_into(),
 					),
 				],
 				vec![
                     // 5HgAxuAcEybo448w5BZdoceCuHMAbEW9AetBKsj9s5GEBZT3
-                    hex!["f83a0218e100ce3ede12c5d403116ef034124c62b181fff6935403cea9396d2f"].into(),                    
+                    hex!["f83a0218e100ce3ede12c5d403116ef034124c62b181fff6935403cea9396d2f"].into(),   
+                    // 5DkJvQp2gqHraWZU1BNCDxEKTQHezn2Qy7z5hLPksUdjtEG9                 
                     hex!["4a70d789b0f0897e0880e8d3d532187ac77cbda04228cfadf8bededdd0b1005e"].into(),
 					get_account_id_from_seed::<sr25519::Public>("Alice"),
 					get_account_id_from_seed::<sr25519::Public>("Bob"),
@@ -55,7 +58,7 @@ pub fn get_chain_spec() -> Md5ChainSpec {
 					get_account_id_from_seed::<sr25519::Public>("Eve//stash"),
 					get_account_id_from_seed::<sr25519::Public>("Ferdie//stash"),
 				],
-				1000.into(),
+				4088.into(),
 			)
 		},
 		Vec::new(),
@@ -64,8 +67,8 @@ pub fn get_chain_spec() -> Md5ChainSpec {
 		None,
 		Some(properties),
 		Extensions {
-			relay_chain: "rococo-local".into(), // You MUST set this to the correct network!
-			para_id: 1000,
+			relay_chain: "rococo".into(), // You MUST set this to the correct network!
+			para_id: 4088,
 		},
 	)
 }
@@ -97,7 +100,7 @@ fn md5_genesis(
 					(
 						acc.clone(),                 // account id
 						acc,                         // validator id
-						template_session_keys(aura), // session keys
+						session_keys(aura), // session keys
 					)
 				})
 				.collect(),
