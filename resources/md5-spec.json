@@ -10,8 +10,8 @@
     "tokenDecimals": 18,
     "tokenSymbol": "MD5"
   },
-  "relayChain": "rococo-local",
-  "paraId": 1000,
+  "relayChain": "rococo",
+  "paraId": 4088,
   "codeSubstitutes": {},
   "genesis": {
     "runtime": {
@@ -20,7 +20,7 @@
       },
       "parachainSystem": null,
       "parachainInfo": {
-        "parachainId": 1000
+        "parachainId": 4088
       },
       "balances": {
         "balances": [
@@ -84,8 +84,8 @@
       },
       "collatorSelection": {
         "invulnerables": [
-          "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
-          "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty"
+          "5HgAxuAcEybo448w5BZdoceCuHMAbEW9AetBKsj9s5GEBZT3",
+          "5DkJvQp2gqHraWZU1BNCDxEKTQHezn2Qy7z5hLPksUdjtEG9"
         ],
         "candidacyBond": 16000000000,
         "desiredCandidates": 0
@@ -93,17 +93,17 @@
       "session": {
         "keys": [
           [
-            "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
-            "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
+            "5HgAxuAcEybo448w5BZdoceCuHMAbEW9AetBKsj9s5GEBZT3",
+            "5HgAxuAcEybo448w5BZdoceCuHMAbEW9AetBKsj9s5GEBZT3",
             {
-              "aura": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY"
+              "aura": "5HgAxuAcEybo448w5BZdoceCuHMAbEW9AetBKsj9s5GEBZT3"
             }
           ],
           [
-            "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty",
-            "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty",
+            "5DkJvQp2gqHraWZU1BNCDxEKTQHezn2Qy7z5hLPksUdjtEG9",
+            "5DkJvQp2gqHraWZU1BNCDxEKTQHezn2Qy7z5hLPksUdjtEG9",
             {
-              "aura": "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty"
+              "aura": "5DkJvQp2gqHraWZU1BNCDxEKTQHezn2Qy7z5hLPksUdjtEG9"
             }
           ]
         ]
